@@ -1,0 +1,71 @@
+2021-11-29 15:29:24,111 INFO _main.py 38:: ################################################################
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                              batch_size: 64                  #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                         test_batch_size: 64                  #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                                  epochs: 40                  #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                               optimizer: SGD                 #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                                      lr: 0.01                #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                                momentum: 0.5                 #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                            weight_decay: 0.0                 #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                                    seed: 1                   #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                            log_interval: 11                  #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                             num_clients: 40                  #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                           output_folder: experiments         #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                                 dataset: mnist               #
+2021-11-29 15:29:24,111 INFO _main.py 40:: #                             loader_type: dirichlet           #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                             loader_path: ./data/loader.pk    #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                                      AR: mudhog              #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                     n_attacker_backdoor: 0                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                        backdoor_trigger: [0, 0, 1, 1]        #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #             n_attacker_semanticBackdoor: 0                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                n_attacker_labelFlipping: 0                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #     n_attacker_labelFlippingDirectional: 0                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                   n_attacker_omniscient: 0                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                        omniscient_scale: 1                   #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                                 attacks: None                #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                      save_model_weights: False               #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                         experiment_name: sExp4B_mnist_mudhog_40C_3MLF#
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                          path_to_aggNet: None                #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                                  device: cuda                #
+2021-11-29 15:29:24,112 INFO _main.py 40:: #                            inner_epochs: 4                   #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                                 verbose: True                #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                         list_unreliable: [38]                #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                     unreliable_fraction: 0.5                 #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                    unreliable_fracTrain: 0.3                 #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                         mean_unreliable: 0.0                 #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                             blur_method: gaussian_smooth     #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                      max_std_unreliable: 50                  #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                     list_uatk_add_noise: [18]                #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                          mean_add_noise: 0.0                 #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                           std_add_noise: 0.01                #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                     list_uatk_flip_sign: [5]                 #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                list_tatk_label_flipping: []                  #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #          list_tatk_multi_label_flipping: [3, 1, 17]          #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                           source_labels: [1, 2, 3]           #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                            target_label: 7                   #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                      list_tatk_backdoor: []                  #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #                  attacker_list_backdoor: []                  #
+2021-11-29 15:29:24,113 INFO _main.py 40:: #          attacker_list_semanticBackdoor: []                  #
+2021-11-29 15:29:24,114 INFO _main.py 40:: #             attacker_list_labelFlipping: []                  #
+2021-11-29 15:29:24,114 INFO _main.py 40:: #  attacker_list_labelFlippingDirectional: []                  #
+2021-11-29 15:29:24,114 INFO _main.py 40:: #                attacker_list_omniscient: []                  #
+2021-11-29 15:29:24,114 INFO _main.py 41:: ################################################################
+2021-11-29 15:29:24,114 INFO _main.py 42:: Namespace(AR='mudhog', attacker_list_backdoor=array([], dtype=int64), attacker_list_labelFlipping=array([], dtype=int64), attacker_list_labelFlippingDirectional=array([], dtype=int64), attacker_list_omniscient=array([], dtype=int64), attacker_list_semanticBackdoor=array([], dtype=int64), attacks=None, backdoor_trigger=[0, 0, 1, 1], batch_size=64, blur_method='gaussian_smooth', dataset='mnist', device='cuda', epochs=40, experiment_name='sExp4B_mnist_mudhog_40C_3MLF', inner_epochs=4, list_tatk_backdoor=[], list_tatk_label_flipping=[], list_tatk_multi_label_flipping=[3, 1, 17], list_uatk_add_noise=[18], list_uatk_flip_sign=[5], list_unreliable=[38], loader_path='./data/loader.pk', loader_type='dirichlet', log_interval=11, lr=0.01, max_std_unreliable=50, mean_add_noise=0.0, mean_unreliable=0.0, momentum=0.5, n_attacker_backdoor=0, n_attacker_labelFlipping=0, n_attacker_labelFlippingDirectional=0, n_attacker_omniscient=0, n_attacker_semanticBackdoor=0, num_clients=40, omniscient_scale=1, optimizer='SGD', output_folder='experiments', path_to_aggNet=None, save_model_weights=False, seed=1, source_labels=[1, 2, 3], std_add_noise=0.01, target_label=7, test_batch_size=64, unreliable_fracTrain=0.3, unreliable_fraction=0.5, verbose=True, weight_decay=0.0)
+2021-11-29 15:29:24,114 INFO _main.py 43:: #####################
+2021-11-29 15:29:24,114 INFO _main.py 44:: #####################
+2021-11-29 15:29:24,114 INFO _main.py 45:: #####################
+2021-11-29 15:29:24,114 INFO _main.py 46:: Aggregation Rule:	mudhog
+2021-11-29 15:29:24,114 INFO _main.py 47:: Data distribution:	dirichlet
+2021-11-29 15:29:24,115 INFO _main.py 48:: Attacks:	None 
+2021-11-29 15:29:24,115 INFO _main.py 49:: #####################
+2021-11-29 15:29:24,115 INFO _main.py 50:: #####################
+2021-11-29 15:29:24,115 INFO _main.py 51:: #####################
+2021-11-29 15:29:26,561 INFO _main.py 132:: [1-normal, 0-malicious] label =tensor([1., 0., 1., 0., 1., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0.,
+        0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.])
+2021-11-29 15:29:26,564 INFO clients_attackers.py 72:: init ATTACK MULTI-LABEL-FLIPPING, change label [1, 2, 3] to 7 Client 1
+2021-11-29 15:29:26,568 INFO clients_attackers.py 72:: init ATTACK MULTI-LABEL-FLIPPING, change label [1, 2, 3] to 7 Client 3
+2021-11-29 15:29:26,574 INFO clients_attackers.py 206:: init ATTACK OMNISCIENT Client 5
+2021-11-29 15:29:26,601 INFO clients_attackers.py 72:: init ATTACK MULTI-LABEL-FLIPPING, change label [1, 2, 3] to 7 Client 17
+2021-11-29 15:29:26,606 INFO clients_attackers.py 239:: init ATTACK ADD NOISE TO GRAD Client 18
+2021-11-29 15:29:26,651 INFO clients_attackers.py 18:: init UNRELIABLE Client 38
+2021-11-29 15:29:26,655 INFO server.py 182:: [Server] Start testing

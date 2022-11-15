@@ -9,6 +9,7 @@ The experimental results as compared to six state-of-the-art benchmarks show tha
 
 ## Citation Request:
 
+```
 @inproceedings{gupta2022long,
   title={Long-Short History of Gradients Is All You Need: Detecting Malicious and Unreliable Clients in Federated Learning},
   author={Gupta, Ashish and Luo, Tie and Ngo, Mao V and Das, Sajal K},
@@ -17,3 +18,4 @@ The experimental results as compared to six state-of-the-art benchmarks show tha
   year={2022},
   organization={Springer}
 }
+```

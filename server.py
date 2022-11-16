@@ -14,6 +14,7 @@ from utils import utils
 from utils.backdoor_semantic_utils import SemanticBackdoor_Utils
 from utils.backdoor_utils import Backdoor_Utils
 import time
+import json
 
 def find_separate_point(d):
     # d should be flatten and np or list
@@ -155,6 +156,8 @@ class Server():
         self.log_path = log_path
         self.log_sim_path = '{}/sims_{}_{}.npy'.format(log_path, exp_name, t_run)
         self.log_norm_path = '{}/norms_{}_{}.npy'.format(log_path, exp_name, t_run)
+        self.log_results = f'{log_path}/acc_prec_rec_f1_{exp_name}_{t_run}.txt'
+        self.output_file = open(self.log_results, 'w', encoding='utf-8')
 
     def close(self):
         if self.log_sims is None or self.log_norms is None:
@@ -163,6 +166,7 @@ class Server():
             np.save(f, self.log_sims, allow_pickle=False)
         with open(self.log_norm_path, 'wb') as f:
             np.save(f, self.log_norms, allow_pickle=False)
+        self.output_file.close()
 
     def init_stateChange(self):
         states = deepcopy(self.model.state_dict())
@@ -185,6 +189,8 @@ class Server():
         test_loss = 0
         correct = 0
         count = 0
+        nb_classes = 10 # for MNIST, Fashion-MNIST, CIFAR-10
+        cf_matrix = torch.zeros(nb_classes, nb_classes)
         with torch.no_grad():
             for data, target in self.dataLoader:
                 data, target = data.to(self.device), target.to(self.device)
@@ -196,12 +202,32 @@ class Server():
                     pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
                 correct += pred.eq(target.view_as(pred)).sum().item()
                 count += pred.shape[0]
+                for t, p in zip(target.view(-1), pred.view(-1)):
+                    cf_matrix[t.long(), p.long()] += 1
         test_loss /= count
         accuracy = 100. * correct / count
         self.model.cpu()  ## avoid occupying gpu when idle
         logging.info(
             '[Server] Test set: Average loss: {:.4f}, Accuracy: {}/{} ({}%)\n'.format(
                 test_loss, correct, count, accuracy))
+        logging.info(f"[Sever] Confusion matrix:\n {cf_matrix.detach().cpu()}")
+        cf_matrix = cf_matrix.detach().cpu().numpy()
+        row_sum = np.sum(cf_matrix, axis=0) # predicted counts
+        col_sum = np.sum(cf_matrix, axis=1) # targeted counts
+        diag = np.diag(cf_matrix)
+        precision = diag / row_sum # tp/(tp+fp), p is predicted positive.
+        recall = diag / col_sum # tp/(tp+fn)
+        f1 = 2*(precision*recall)/(precision+recall)
+        m_acc = np.sum(diag)/np.sum(cf_matrix)
+        results = {'accuracy':accuracy,'test_loss':test_loss,
+                   'precision':precision.tolist(),'recall':recall.tolist(),
+                   'f1':f1.tolist(),'confusion':cf_matrix.tolist(),
+                   'epoch':self.iter}
+        json.dump(results, self.output_file)
+        self.output_file.write("\n")
+        self.output_file.flush()
+        logging.info(f"[Server] Precision={precision},\n Recall={recall},\n F1-score={f1},\n my_accuracy={m_acc*100.}[%]")
+
         return test_loss, accuracy
 
     def test_backdoor(self):
@@ -484,11 +510,25 @@ class Server():
             of normalized short HoGs among good candidates.
             NOTE: we tested finding flip-sign attack with longHoG, but it failed after long running.
             """
-            median_norm_shortHoG = np.median(np.array([v for v in normalized_sHoGs.values()]), axis=0)
             flip_sign_id = set()
+            """
+            median_norm_shortHoG = np.median(np.array([v for v in normalized_sHoGs.values()]), axis=0)
             for i, v in enumerate(full_norm_short_HoGs):
                 dot_prod = np.dot(median_norm_shortHoG, v)
                 if dot_prod < 0: # angle > 90
+                    flip_sign_id.add(i)
+                    #logging.debug("Detect FLIP_SIGN client={}".format(i))
+            logging.info(f"flip_sign_id={flip_sign_id}")
+            """
+            non_mal_sHoGs = dict(short_HoGs) # deep copy dict
+            for i in self.mal_ids:
+                non_mal_sHoGs.pop(i)
+            median_sHoG = np.median(np.array(list(non_mal_sHoGs.values())), axis=0)
+            for i, v in short_HoGs.items():
+                #logging.info(f"median_sHoG={median_sHoG}, v={v}")
+                v = np.array(list(v))
+                d_cos = np.dot(median_sHoG, v)/(np.linalg.norm(median_sHoG)*np.linalg.norm(v))
+                if d_cos < 0: # angle > 90
                     flip_sign_id.add(i)
                     #logging.debug("Detect FLIP_SIGN client={}".format(i))
             logging.info(f"flip_sign_id={flip_sign_id}")
@@ -589,15 +629,15 @@ class Server():
 
             # STEP 4: UNRELIABLE CLIENTS
             """using normalized short HoGs (normalized_sHoGs) to detect unreliable clients
-            1st: remove all detected untargeted and targeted attack till now (manipulate directly).
+            1st: remove all malicious clients (manipulate directly).
             2nd: find angles between normalized_sHoGs to the median point
             which mostly normal point and represent for aggreation (e.g., Median method).
             3rd: find confident mid-point. Unreliable clients have larger angles
             or smaller cosine similarities.
             """
-            sHoGs_ids = list(normalized_sHoGs.keys())
-            for i in sHoGs_ids:
-                if i in uAtk_id or i in tAtk_id:
+            """
+            for i in self.mal_ids:
+                if i in normalized_sHoGs:
                     normalized_sHoGs.pop(i)
 
             angle_normalized_sHoGs = {}
@@ -613,8 +653,27 @@ class Server():
                     uRel_id.add(k)
                 else:
                     normal_id.add(k)
+            """
+            for i in self.mal_ids:
+                if i in short_HoGs:
+                    short_HoGs.pop(i)
+
+            angle_sHoGs = {}
+            # update this value again after excluding malicious clients
+            median_sHoG = np.median(np.array(list(short_HoGs.values())), axis=0)
+            for i, v in short_HoGs.items():
+                angle_sHoGs[i] = np.dot(median_sHoG, v)/(np.linalg.norm(median_sHoG)*np.linalg.norm(v))
+
+            angle_sep_sH = find_separate_point(list(angle_sHoGs.values()))
+            normal_id, uRel_id = set(), set()
+            for k, v in angle_sHoGs.items():
+                if v < angle_sep_sH: # larger angle, smaller cosine similarity
+                    uRel_id.add(k)
+                else:
+                    normal_id.add(k)
             logging.info(f"This round UNRELIABLE={uRel_id}, normal_id={normal_id}")
-            logging.debug(f"anlge_normalized_sHoGs={angle_normalized_sHoGs}, angle_sep_nsH={angle_sep_nsH}")
+            #logging.debug(f"anlge_normalized_sHoGs={angle_normalized_sHoGs}, angle_sep_nsH={angle_sep_nsH}")
+            logging.debug(f"anlge_sHoGs={angle_sHoGs}, angle_sep_nsH={angle_sep_sH}")
 
             for k in range(self.num_clients):
                 if k in uRel_id:
@@ -627,13 +686,6 @@ class Server():
                 if k not in uRel_id and self.count_unreliable[k] > 0:
                     self.count_unreliable[k] -= 1
             logging.info("UNRELIABLE clients ={}".format(self.unreliable_ids))
-            remain_tAtk_id = sus_tAtk_uRel_id2 - uRel_id
-            tAtk_id = tAtk_id | remain_tAtk_id #union
-            logging.info(f"this round all TARGETED ATTACK={tAtk_id}")
-
-            # FOR ATTACKERs:
-            self.add_mal_id(flip_sign_id, uAtk_id, tAtk_id)
-            logging.info("OVERTIME MALICIOUS client ids ={}".format(self.mal_ids))
 
             normal_clients = []
             for i, client in enumerate(clients):

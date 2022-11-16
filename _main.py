@@ -204,6 +204,8 @@ def main(args):
                 device, args.inner_epochs)
         server.attach(client_i)
 
+    server.set_log_path(log_dir, args.experiment_name, start_time)
+
     loss, accuracy = server.test()
     steps = 0
     writer.add_scalar('test/loss', loss, steps)
@@ -217,8 +219,6 @@ def main(args):
 
         writer.add_scalar('test/loss_backdoor', loss, steps)
         writer.add_scalar('test/backdoor_success_rate', accuracy, steps)
-
-    server.set_log_path(log_dir, args.experiment_name, start_time)
 
     for j in range(args.epochs):
         steps = j + 1
